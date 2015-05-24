@@ -4,17 +4,30 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
+/*
+ * Model read data from the file
+ * and stored it in linked list also
+ * save data to file
+ * @author Peter Skurski
+ */
 class FileModel {
-	private final static String FILE = "data.txt";
-	private Scanner __scanner = null;
-	private PrintWriter __writer = null;
-	private List<Object[]> _records = new ArrayList<Object[]>();
+    //path to file with contacts
+    private static final String FILE = "data.txt";
+    private static Scanner __scanner; //input object
+    private static PrintWriter __writer; //output object
+    private static List<Person> __persons = new LinkedList<Person>(); //linked list with Persons
 
-	private void readFile(String file) {	
+
+    FileModel() {}
+
+    /*
+     * Read data from file and insert it into linked list
+     */    
+	private static void readFile(String file) {	
 		if(file == null) file = FILE;
 		
 		try {
@@ -24,11 +37,9 @@ class FileModel {
 			__scanner.useDelimiter(";");
 	
 			while(__scanner.hasNextLine()) {
-				_records.add(new Object[] {__scanner.next(),
-											__scanner.next(),
-											__scanner.next(),
-											__scanner.next(),
-											__scanner.next()});
+				Person person = new Person(__scanner.next(), __scanner.next(), __scanner.next(),
+                		__scanner.next(), __scanner.next());
+				__persons.add(person);
 			}
 		} catch(FileNotFoundException e) {
 			e.printStackTrace();
@@ -38,16 +49,17 @@ class FileModel {
 			__scanner.close();
 		}
 	}
-	
-    void writeFile(String file) {
+
+    /*
+     * Write linked list to output file
+     */
+    private static void writeFile(String file) {
     	if(file == null) file = FILE;
     	
         try {
         	__writer = new PrintWriter(file);
-            for(Object[] rec: _records) {
-            	for(Object obj: rec)
-            		__writer.print(";" + obj);
-//            	__writer.println();
+            for(Person per: __persons) {
+            	__writer.println(per.toFile());
             }
 
         } catch(IOException e) {
@@ -56,22 +68,26 @@ class FileModel {
         	__writer.close();
         }
     }
-	
-	public List<Object[]> getRecords(String file) {
-		_records.clear();
+
+	static List<Person> getRecords(String file) {
+		__persons.clear();
 		readFile(file);
-		return _records;
+		return __persons;
 	}
 	
-	public void setRecord(Object value, int row, int col) {
-		_records.get(row)[col] = value;
+    static void write(String file) {
+    	writeFile(file);
+    }
+	
+	static void setRecord(Object value, int row, int col) {
+		__persons.get(row).setPersonValue(col, value);
+	}
+
+	static void removeRecord(int row) {
+		__persons.remove(row);
 	}
 	
-	public void removeRecord(int row) {
-		_records.remove(row);
-	}
-	
-	public void addRecord(Object[] record) {
-		_records.add(record);
+	static void addRecord(Person record) {
+		__persons.add(record);
 	}
 }

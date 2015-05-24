@@ -27,6 +27,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableRowSorter;
 
 import notes.model.CsvTableModel;
+import notes.model.Person;
 
 class CsvTable extends JFrame {
 	private Map<String, JPanel> _panelMap = new HashMap<String, JPanel>();
@@ -162,8 +163,9 @@ class CsvTable extends JFrame {
 		_buttonMap.get("addButt").addActionListener(new ActionListener() {
 			@Override 
 			public void actionPerformed(ActionEvent e) {
-				_tableModel.addRow(new Object[] {_textField[0].getText(), _textField[1].getText(),
-												_textField[2].getText(), _textField[3].getText(), _textField[4].getText()});
+				Person person = new Person(_textField[0].getText(), _textField[1].getText(),
+						_textField[2].getText(), _textField[3].getText(), _textField[4].getText());
+				_tableModel.addRow(person);
 			}
 		});
 
