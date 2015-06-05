@@ -1,4 +1,4 @@
-package notes.main;
+package notes.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -17,6 +17,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -24,42 +25,60 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
 import notes.model.CsvTableModel;
 import notes.model.Person;
 
-class CsvTable extends JFrame {
+public class ContactPanel extends NotePanel {
 	private Map<String, JPanel> _panelMap = new HashMap<String, JPanel>();
 	private CsvTableModel _tableModel = new CsvTableModel();
 	private Map<String, JButton> _buttonMap = new HashMap<String, JButton>();
 	private Map<String, JMenuItem> _itemMap = new HashMap<String, JMenuItem>();
 	private JTable _table = new JTable(_tableModel);
 	private JTextField[] _textField = new JTextField[5];
+	private JMenuBar menuBar = new JMenuBar();
 	private final static int extraWindowWidth = 50;
 
-	CsvTable() {
-		// Create JMenuBar
+	public ContactPanel() {
+		/********************* ADD MENU BAR *********************************************/
 		setMenu(); 
 		actionMenu();
+		/********************* END OF ADD MENU BAR **************************************/
 		
-		// Create scrollPane with sortable table
-		_panelMap.put("mainPanel", new JPanel(new BorderLayout()));
+		/***************** CREATE SCROLLPANE WITH SORTABLE TABLE ************************/
+		_panelMap.put("contactPanel", new JPanel(new BorderLayout()));
 		JScrollPane scrollPane = new JScrollPane();
 		_table = new JTable(_tableModel);
-		scrollPane.setViewportView(_table);	
-		_table.setPreferredScrollableViewportSize(new Dimension(600,200));
-		_table.setRowSorter(new TableRowSorter(_tableModel));
-		_panelMap.get("mainPanel").add(scrollPane);
 		
-		// Create form panel
+        //set column width and center the text
+		int[] colWidth = {30,50,10,50};
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for(int i=0; i<_table.getColumnCount(); i++) {
+        	_table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        	if(i == _table.getColumnCount() -1)
+        		_table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+        	else
+        		_table.getColumnModel().getColumn(i).setPreferredWidth(colWidth[i]);
+        }
+		
+		scrollPane.setViewportView(_table);	
+		_table.setPreferredScrollableViewportSize(new Dimension(680,250));
+		_table.setRowSorter(new TableRowSorter(_tableModel));
+		_panelMap.get("contactPanel").add(scrollPane);
+		/***************** END OFCREATE SCROLLPANE WITH SORTABLE TABLE ******************/
+
+		/********************** CREATE FORM PANEL **************************************/
 		_panelMap.put("formPanel", createFormPanel(new String[] 
 				{"Imie ", "Nazwisko ", "Wiek ", "Email ", "Telefon "}));
+		/******************** END OF CREATE FORM PANEL *********************************/
 		
-		// Create buttons
-		String[] names = {"Dodaj rekord","Usuń rekord"};
-		String[] objName = {"addButt","delButt"};
-		createButtons(names,objName);
+		/************************ CREATE BUTTONS **************************************/
+		String[] names = {"Dodaj rekord","Usuń rekord", "Wyczyść formularz"};
+		String[] objName = {"addButt","delButt", "clearButt"};
+		createButtons(_buttonMap,names,objName);
         _panelMap.put("buttPanel",  new JPanel() {
             //Make the panel wider than it really needs, so
             //the window's wide enough for the tabs to stay
@@ -70,22 +89,25 @@ class CsvTable extends JFrame {
                 return size;
             }
         });
-		_panelMap.get("buttPanel").add(_buttonMap.get("addButt"));
-		_panelMap.get("buttPanel").add(_buttonMap.get("delButt"));
+        
+        _panelMap.get("buttPanel").setPreferredSize(new Dimension(500,160));
+        for(Map.Entry<String, JButton> entry : _buttonMap.entrySet()) 
+    		_panelMap.get("buttPanel").add(entry.getValue());
+
 		actionButton();
+		/********************** END OF CREATE BUTTONS **********************************/
+
+		createGUI();
 	}
 	
     private void setMenu() {
-        JMenuBar menuBar = new JMenuBar();
-        String[] menuLabel = {"Rekordy", "Notatnik"};
+        String[] menuLabel = {"Edycja"};
         String[][] itemLabel = {{"Zapisz", "Zapisz jako", "Wczytaj z pliku", "Zamknij"}};
         String[][] itemObjName = {{"saveItem", "saveAsItem", "readItem", "closeItem"}};
-        menuBar = createMenu(menuBar,menuLabel,itemLabel,itemObjName);  
-        this.setJMenuBar(menuBar);
+        createMenu(menuLabel,itemLabel,itemObjName);  
     }
-    
-	private JMenuBar createMenu(JMenuBar menuBar, String[] menuLabel, 
-		String[][] itemLabel, String[][] itemObjName) {
+
+	private JMenuBar createMenu(String[] menuLabel, String[][] itemLabel, String[][] itemObjName) {
 		JMenu[] menu = new JMenu[menuLabel.length];
 		for(int i=0; i<menuLabel.length; i++) {
 			menu[i] = new JMenu(menuLabel[i]);
@@ -123,7 +145,7 @@ class CsvTable extends JFrame {
                 FileNameExtensionFilter filter = new FileNameExtensionFilter(
                     "Csv and Txt", "csv", "txt");
                 chooser.setFileFilter(filter);
-                int returnVal = chooser.showSaveDialog(_panelMap.get("mainPanel"));
+                int returnVal = chooser.showSaveDialog(_panelMap.get("contactPanel"));
                 if(returnVal == JFileChooser.APPROVE_OPTION) {
                 	_tableModel.saveData(chooser.getSelectedFile().getName());
                 }
@@ -136,7 +158,7 @@ class CsvTable extends JFrame {
                 FileNameExtensionFilter filter = new FileNameExtensionFilter(
                     "Csv and Txt", "csv", "txt");
                 chooser.setFileFilter(filter);
-                int returnVal = chooser.showOpenDialog(_panelMap.get("mainPanel"));
+                int returnVal = chooser.showOpenDialog(_panelMap.get("contactPanel"));
                 if(returnVal == JFileChooser.APPROVE_OPTION) {
                 	_tableModel.getData(chooser.getSelectedFile().getName());
                 }
@@ -149,14 +171,9 @@ class CsvTable extends JFrame {
 		JPanel panel = new JPanel(new GridLayout(len,len));
 		for(int i=0; i<len; i++) {
 			panel.add(new JLabel(names[i], SwingConstants.RIGHT));
-			panel.add(_textField[i] = new JTextField(10));
+			panel.add(_textField[i] = new JTextField(30));
 		}
 		return panel;
-	}
-	
-	private void createButtons(String[] names, String[] objName) {
-		for(int i=0; i<names.length; i++)
-			_buttonMap.put(objName[i], new JButton(names[i]));
 	}
 	
 	private void actionButton() {
@@ -182,27 +199,31 @@ class CsvTable extends JFrame {
                 });
             }
         });
+        
+        _buttonMap.get("clearButt").addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		for(JTextField field: _textField)
+        			field.setText("");
+        	}
+        });
 	}
 	
-	void createAndShowGUI() {
-		add(_panelMap.get("mainPanel"), BorderLayout.PAGE_START);
+	private void createGUI() {
+		add(_panelMap.get("contactPanel"), BorderLayout.PAGE_START);
 		add(_panelMap.get("formPanel"), BorderLayout.CENTER);
 		add(_panelMap.get("buttPanel"), BorderLayout.PAGE_END);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(600, 400));
         setLocation(150, 150);
-        setTitle("Podręczny notatnik z książką telefoniczną");
-		pack();
-		setVisible(true);
+		setVisible(false);
 	}
 	
-	public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-            	CsvTable app = new CsvTable();
-                app.createAndShowGUI();
-            }
-        });
+    public JMenuBar addMenu() {
+    	return menuBar;
+    }
+    
+	public Map<String, JButton> getButtons() {
+		return null;
 	}
 }
 

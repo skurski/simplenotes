@@ -6,7 +6,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 public class CsvTableModel extends AbstractTableModel {
-	private String[] columnNames = {"Imie", "Nazwisko", "Wiek", "Email", "Telefon"};
+	private String[] columnNames = {"Imie", "Nazwisko", "Wiek", "Telefon", "Email"};
 	private List<Person> data = new LinkedList<Person>();
 	
 	public CsvTableModel() {
