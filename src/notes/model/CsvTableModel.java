@@ -8,15 +8,16 @@ import javax.swing.table.AbstractTableModel;
 public class CsvTableModel extends AbstractTableModel {
 	private String[] columnNames = {"Imie", "Nazwisko", "Wiek", "Telefon", "Email"};
 	private List<Person> data = new LinkedList<Person>();
+	private PersonData perData = new PersonData();
 	
 	public CsvTableModel() {
-		data = FileModel.getRecords(null);
+		data = perData.getRecords(null);
 	}
 	
 	public void getData(String file) {
 		for(int i=0; i<data.size()-1; i++) fireTableRowsDeleted(i,i);
 		data.clear();
-		data = FileModel.getRecords(file);
+		data = perData.getRecords(file);
 		fireTableDataChanged();
 	}
 	
@@ -40,7 +41,7 @@ public class CsvTableModel extends AbstractTableModel {
     	Person toChange = data.get(row);
     	toChange.setPersonValue(col, value);
     	data.set(row, toChange);
-        FileModel.setRecord(value, row, col);
+    	perData.setRecord(value, row, col);
         fireTableCellUpdated(row, col);
     }
 	
@@ -66,6 +67,6 @@ public class CsvTableModel extends AbstractTableModel {
     }
     
     public void saveData(String file) {
-    	FileModel.write(file);
+    	perData.write(file);
     }
 }

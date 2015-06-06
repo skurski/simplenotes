@@ -5,7 +5,7 @@ package notes.model;
  * represents one contact in phone book
  * @author Peter Skurski
  */
-public class Person implements Comparable<Person> {
+public class Person implements Comparable<Person>, Writable {
     private String _firstName;
     private String _lastName;
     private String _age;
@@ -66,7 +66,7 @@ public class Person implements Comparable<Person> {
     	}
     }
     
-    String toFile() {
+    public String toFile() {
     	return String.format(";"+_firstName+";"+_lastName+";"+_age+";"+
     				_phone+";"+_email);
     }

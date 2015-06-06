@@ -4,43 +4,39 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-/*
- * Model read data from the file
- * and stored it in linked list also
- * save data to file
- * @author Peter Skurski
- */
 class FileModel {
-    //path to file with contacts
-    private static final String FILE = "data.txt";
-    private static Scanner __scanner; //input object
-    private static PrintWriter __writer; //output object
-    private static List<Person> __persons = new LinkedList<Person>(); //linked list with Persons
-
+    //path to file
+    private final String FILE = "data.txt";
+    private Scanner __scanner; //input object
+    private PrintWriter __writer; //output object
 
     FileModel() {}
 
     /*
-     * Read data from file and insert it into linked list
+     * Read data from file
      */    
-	private static void readFile(String file) {	
+	private ArrayList<String[]> readFile(String file, String delimeter, int col) {	
 		if(file == null) file = FILE;
+		ArrayList<String[]> data = new ArrayList<String[]>();
 		
 		try {
 			File f = new File(file);
 			f.createNewFile();
 			__scanner = new Scanner(f);
-			__scanner.useDelimiter(";");
+			__scanner.useDelimiter(delimeter);
 	
 			while(__scanner.hasNextLine()) {
-				Person person = new Person(__scanner.next(), __scanner.next(), __scanner.next(),
-                		__scanner.next(), __scanner.next());
-				__persons.add(person);
+				String[] record = new String[col];
+				for(int i=0; i<col; i++) 
+					record[i] = __scanner.next();
+				data.add(record);
 			}
+
 		} catch(FileNotFoundException e) {
 			e.printStackTrace();
 		} catch(IOException e) {
@@ -48,19 +44,20 @@ class FileModel {
 		} finally {
 			__scanner.close();
 		}
+		
+		return data;
 	}
 
     /*
      * Write linked list to output file
      */
-    private static void writeFile(String file) {
+    private void writeFile(String file, ArrayList<Writable> data) {
     	if(file == null) file = FILE;
     	
         try {
         	__writer = new PrintWriter(file);
-            for(Person per: __persons) {
-            	__writer.println(per.toFile());
-            }
+        	for(Writable rec : data)
+        		__writer.println(rec.toFile());
 
         } catch(IOException e) {
             e.printStackTrace();
@@ -68,26 +65,30 @@ class FileModel {
         	__writer.close();
         }
     }
-
-	static List<Person> getRecords(String file) {
-		__persons.clear();
-		readFile(file);
-		return __persons;
-	}
 	
-    static void write(String file) {
-    	writeFile(file);
+    ArrayList<String[]> read(String file, String delimeter, int col) {
+    	return readFile(file, delimeter, col);
     }
-	
-	static void setRecord(Object value, int row, int col) {
-		__persons.get(row).setPersonValue(col, value);
-	}
+    
+    void write(String file, ArrayList<Writable> data) {
+    	writeFile(file, data);
+    }
+    
+    public static void main(String[] args) {
+    	LinkedList<Person> persons = new LinkedList<Person>();
+    	FileModel fileModel = new FileModel();
+    	ArrayList<String[]> data = fileModel.read("data.txt", ";", 5);
+    	
+    	for(int i=0; i<data.size(); i++) {
+    		persons.add(new Person(data.get(i)[0],data.get(i)[1],data.get(i)[2],data.get(i)[3],data.get(i)[4] ));
+    	}
+    	
+    	for(Person per : persons)
+    		System.out.println(per);
+    	
+    	ArrayList<Writable> dataToWrite = new ArrayList<Writable>();
+    	dataToWrite.add(new Person("test","test","44", "test@ha.pl", "453245"));
+    	fileModel.write("data.txt", dataToWrite);
+    }
 
-	static void removeRecord(int row) {
-		__persons.remove(row);
-	}
-	
-	static void addRecord(Person record) {
-		__persons.add(record);
-	}
 }

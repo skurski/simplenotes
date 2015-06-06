@@ -22,7 +22,7 @@ public class IntroPanel extends NotePanel {
 
 	public IntroPanel() {		
 		/************************ CREATE BUTTONS **************************************/
-		String[] names = {"Kontakty telefoniczne","Segregator notatek", "Kalkulator"};
+		String[] names = {"Kontakty telefoniczne","Edytor tekstowy", "Kalkulator"};
 		String[] objName = {"contactBtn","notesBtn", "calcBtn"};
 		createButtons(_buttonMap,names,objName);
 		GridLayout grid = new GridLayout(3,1);
