@@ -6,16 +6,16 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Scanner;
 
 class FileModel {
-    //path to file
-    private final String FILE = "data.txt";
+    String FILE = null; //path to file
     private Scanner __scanner; //input object
     private PrintWriter __writer; //output object
 
-    FileModel() {}
+    FileModel() {
+    	FILE = "data.txt";
+    }
 
     /*
      * Read data from file

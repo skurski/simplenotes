@@ -10,18 +10,15 @@ import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -31,7 +28,7 @@ import javax.swing.table.TableRowSorter;
 import notes.model.CsvTableModel;
 import notes.model.Person;
 
-public class ContactPanel extends NotePanel {
+public class ContactPanel extends AbstractPanel {
 	private Map<String, JPanel> _panelMap = new HashMap<String, JPanel>();
 	private CsvTableModel _tableModel = new CsvTableModel();
 	private Map<String, JButton> _buttonMap = new HashMap<String, JButton>();
@@ -39,6 +36,7 @@ public class ContactPanel extends NotePanel {
 	private JTable _table = new JTable(_tableModel);
 	private JTextField[] _textField = new JTextField[5];
 	private JMenuBar menuBar = new JMenuBar();
+	private String _fileName = null;
 	private final static int extraWindowWidth = 50;
 
 	public ContactPanel() {
@@ -129,7 +127,7 @@ public class ContactPanel extends NotePanel {
 		_itemMap.get("saveItem").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				_tableModel.saveData(null);
+				_tableModel.saveData(_fileName);
 			}
 		});
 		_itemMap.get("closeItem").addActionListener(new ActionListener() {
@@ -160,7 +158,8 @@ public class ContactPanel extends NotePanel {
                 chooser.setFileFilter(filter);
                 int returnVal = chooser.showOpenDialog(_panelMap.get("contactPanel"));
                 if(returnVal == JFileChooser.APPROVE_OPTION) {
-                	_tableModel.getData(chooser.getSelectedFile().getName());
+                	_fileName = chooser.getSelectedFile().getName();
+                	_tableModel.getData(_fileName);
                 }
             }
         });

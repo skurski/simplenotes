@@ -2,48 +2,25 @@ package notes.main;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.TableRowSorter;
 
-import notes.calculator.Calculator;
-import notes.model.CsvTableModel;
-import notes.model.Person;
+import notes.panel.AboutPanel;
 import notes.panel.ContactPanel;
 import notes.panel.IntroPanel;
+import notes.panel.AbstractPanel;
 import notes.panel.NotePanel;
 
 class SimpleNotes extends JFrame {
-//	private Map<String, JPanel> _panelMap = new HashMap<String, JPanel>();
-//	private CsvTableModel _tableModel = new CsvTableModel();
 	private Map<String, JButton> _buttonMap = new HashMap<String, JButton>();
-//	private Map<String, JMenuItem> _itemMap = new HashMap<String, JMenuItem>();
-//	private JTabbedPane _tab = new JTabbedPane();
-//	private JTable _table = new JTable(_tableModel);
-//	private JTextField[] _textField = new JTextField[5];
-//	private final static int extraWindowWidth = 50;
-	private Map<String, NotePanel> _mainPanels = new HashMap<String, NotePanel>();
+	private Map<String, AbstractPanel> _mainPanels = new HashMap<String, AbstractPanel>();
 
 	SimpleNotes() {
 		/********************* ADD PANELS AND BUTTONS *********************************************/
@@ -58,6 +35,8 @@ class SimpleNotes extends JFrame {
 	private void addPanelsAndButtons() {
 		_mainPanels.put("introPanel", new IntroPanel());
 		_mainPanels.put("contactPanel", new ContactPanel());
+		_mainPanels.put("notePanel", new NotePanel());
+		_mainPanels.put("aboutPanel", new AboutPanel());
 		
 		_buttonMap.put("returnBtn", new JButton("Powrót"));	
 		_buttonMap.putAll(_mainPanels.get("introPanel").getButtons());
@@ -72,10 +51,26 @@ class SimpleNotes extends JFrame {
 			}
 		});
 		
+		_buttonMap.get("noteBtn").addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				_mainPanels.get("introPanel").setVisible(false);
+				addNotePanel();
+			}
+		});
+		
+		_buttonMap.get("aboutBtn").addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				_mainPanels.get("introPanel").setVisible(false);
+				addAboutPanel();
+			}
+		});
+		
 		_buttonMap.get("returnBtn").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (Map.Entry<String, NotePanel> entry : _mainPanels.entrySet()) {
+				for (Map.Entry<String, AbstractPanel> entry : _mainPanels.entrySet()) {
 				    entry.getValue().setVisible(false);
 				}
 				SimpleNotes.this.setJMenuBar(null);
@@ -89,6 +84,20 @@ class SimpleNotes extends JFrame {
 		add(_mainPanels.get("contactPanel"), BorderLayout.CENTER);
 		this.setJMenuBar(_mainPanels.get("contactPanel").addMenu());
 		_mainPanels.get("contactPanel").setVisible(true);	
+		_buttonMap.get("returnBtn").setVisible(true);
+	}
+	
+	void addNotePanel() {
+		add(_mainPanels.get("notePanel"), BorderLayout.CENTER);
+		this.setJMenuBar(_mainPanels.get("notePanel").addMenu());
+		_mainPanels.get("notePanel").setVisible(true);	
+		_buttonMap.get("returnBtn").setVisible(true);
+	}
+	
+	void addAboutPanel() {
+		add(_mainPanels.get("aboutPanel"), BorderLayout.CENTER);
+		this.setJMenuBar(null);
+		_mainPanels.get("aboutPanel").setVisible(true);	
 		_buttonMap.get("returnBtn").setVisible(true);
 	}
 	

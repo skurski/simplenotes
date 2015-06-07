@@ -1,13 +1,8 @@
 package notes.model;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
 
 /*
  * Model read data from the file
@@ -16,10 +11,6 @@ import java.util.Scanner;
  * @author Peter Skurski
  */
 class PersonData extends FileModel {
-    //path to file with contacts
-//    private static final String FILE = "data.txt";
-//    private static Scanner __scanner; //input object
-//    private static PrintWriter __writer; //output object
     private List<Person> __persons = new LinkedList<Person>(); //linked list with Persons
 
     PersonData() {}

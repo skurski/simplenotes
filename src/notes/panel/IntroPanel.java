@@ -16,23 +16,25 @@ import javax.swing.SwingUtilities;
 
 import notes.calculator.Calculator;
 
-public class IntroPanel extends NotePanel {
+public class IntroPanel extends AbstractPanel {
 	private Map<String, JButton> _buttonMap = new HashMap<String, JButton>();
 	private Map<String, JPanel> _panelMap = new HashMap<String, JPanel>();
 
 	public IntroPanel() {		
 		/************************ CREATE BUTTONS **************************************/
-		String[] names = {"Kontakty telefoniczne","Edytor tekstowy", "Kalkulator"};
-		String[] objName = {"contactBtn","notesBtn", "calcBtn"};
+		String[] names = {"Kontakty telefoniczne","Edytor tekstowy", "Kalkulator", "O programie", "Zamknij"};
+		String[] objName = {"contactBtn","noteBtn", "calcBtn", "aboutBtn", "closeBtn"};
 		createButtons(_buttonMap,names,objName);
-		GridLayout grid = new GridLayout(3,1);
+		GridLayout grid = new GridLayout(objName.length,1);
 		grid.setVgap(20);
         _panelMap.put("buttPanel",  new JPanel(grid));
 
 		_panelMap.get("buttPanel").add(_buttonMap.get("contactBtn"));
-		_panelMap.get("buttPanel").add(_buttonMap.get("notesBtn"));
+		_panelMap.get("buttPanel").add(_buttonMap.get("noteBtn"));
 		_panelMap.get("buttPanel").add(_buttonMap.get("calcBtn"));
-        _panelMap.get("buttPanel").setPreferredSize(new Dimension(400,160));
+		_panelMap.get("buttPanel").add(_buttonMap.get("aboutBtn"));
+		_panelMap.get("buttPanel").add(_buttonMap.get("closeBtn"));
+        _panelMap.get("buttPanel").setPreferredSize(new Dimension(460,300));
         
 		actionButton();
 		/********************** END OF CREATE BUTTONS **********************************/
@@ -56,6 +58,12 @@ public class IntroPanel extends NotePanel {
 		            	new Calculator();
 		            }
 		        });
+			}
+		});
+		_buttonMap.get("closeBtn").addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+		        System.exit(0);
 			}
 		});
 	}

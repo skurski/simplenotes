@@ -1,0 +1,9 @@
+;
+	 Simple Notes wersja 1.0
+     
+     Planowane modyfikacje i rozbudowa funkcjonalności:
+     - dodanie walidacji pól formularzy
+     - sortowanie rekordów w książce telefonicznej nie tylko 
+       w widoku ale również w modelu aby moć zapisać zmiany w pliku
+     - utworzenie drzewa notatek opartego o JTree
+     - tworzenie modeli paneli w oparciu o wzorzec factory
